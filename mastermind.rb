@@ -4,8 +4,6 @@ class Game
         @guesses = []
         @code = @code_breaker.create_code
     end
-    attr_accessor :guesses
-    attr_reader :code_breaker
 
     def print_board
         @guesses.each {|guess| puts "#{guess} | #{check_guess(guess)}"}
@@ -59,7 +57,3 @@ class Player
         end
     end
 end
-
-game = Game.new
-game.guesses.push(game.code_breaker.guess)
-game.print_board
