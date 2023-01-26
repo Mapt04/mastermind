@@ -12,19 +12,20 @@ class Game
     def check_guess(guess)
         left_to_guess = @code
         clue = ""
-        guess.each_with_index do |x, index|
+        guess.each_char.with_index do |x, index|
+            p left_to_guess[index]
             if left_to_guess[index] == x
                 clue += "*"
                 left_to_guess[index] = "-"
             end
         end
-        guess.each do |x|
-            if left_to_guess.includes? x
+        guess.each_char do |x|
+            if left_to_guess.include? x
                 clue += "?"
-                left_to_guess.index(x) = "-"
+                left_to_guess.sub!(x, "-")
             end
         end
-        guess.each do |x|
+        left_to_guess.each_char do |x|
             unless x == "-"
                 clue += "-"
             end
@@ -43,8 +44,8 @@ class Player
     end
 
     def create_code
-        code = []
-        4.times do {code.push rand(1..6)}
+        code = ""
+        4.times {code += rand(1..6).to_s}
         code
     end
 
@@ -52,7 +53,7 @@ class Player
         loop do
             print "Make a guess: "
             guess = gets.chomp
-            return guess if guess.length == 4 and guess.all? {|x| x.to_i in 1..9}
+            return guess if guess.length == 4 && guess.chars.all? {|x| x.to_i in 1..9}
             puts "Invalid Guess"
         end
     end
