@@ -4,16 +4,17 @@ class Game
         @guesses = []
         @code = @code_breaker.create_code
     end
+    attr_accessor :guesses
+    attr_reader :code_breaker
 
     def print_board
-        @guesses.each {|guess| puts guess}
+        @guesses.each {|guess| puts "#{guess} | #{check_guess(guess)}"}
     end
 
     def check_guess(guess)
         left_to_guess = @code
         clue = ""
         guess.each_char.with_index do |x, index|
-            p left_to_guess[index]
             if left_to_guess[index] == x
                 clue += "*"
                 left_to_guess[index] = "-"
@@ -58,3 +59,7 @@ class Player
         end
     end
 end
+
+game = Game.new
+game.guesses.push(game.code_breaker.guess)
+game.print_board
