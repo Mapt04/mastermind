@@ -1,14 +1,15 @@
 class Game
     def initialize
-        @code_breaker = Player.new(self)
         @guesses = []
-        @code = @code_breaker.create_code
+        @clues = []
         @turn_number = 1
     end
+    attr_reader :turn_number
 
     def play
         puts "Welcome to MasterMind!"
-        puts "The code is #{@code}"
+        choose_mode
+        @code = @code_breaker.create_code
         loop do
             puts "\n\nTurn #{@turn_number}/12"
             print_board
@@ -21,6 +22,7 @@ class Game
             end
             if @turn_number == 12
                 puts "\nThe code maker won! The code was #{@code}"
+                return
             end
             @turn_number += 1
         end
@@ -41,7 +43,6 @@ class Game
                 clue += "*"
                 left_to_guess[index] = "-"
                 left_to_check[index] = "-"
-                p left_to_guess
             end
         end
         left_to_check.each_char.with_index do |x, index|
@@ -50,7 +51,6 @@ class Game
                     clue += "?"
                     left_to_guess.sub!(x, "-")
                     left_to_check[index] = "-"
-                    p left_to_guess
                 end
             end
         end
@@ -64,6 +64,22 @@ class Game
 
     def check_win(clue)
         clue == "****"
+    end
+
+    def choose_mode
+        loop do
+            print "Do you want to be the code-setter (1) or the code-breaker (2): "
+            response = gets.chomp
+            if response == "1"
+                @code_breaker = ComputerPlayer.new(self)
+                return
+            end
+            if response == "2"
+                @code_breaker = Player.new(self)
+                return
+            end
+            puts "Invalid response"
+        end
     end
 end
 
@@ -88,4 +104,21 @@ class Player
     end
 end
 
+class ComputerPlayer < Player
+    def create_code
+        loop do
+            print "Create a code: "
+            code = gets.chomp
+            return code if code.length == 4 && code.chars.all? {|x| x.to_i in 1..9}
+            puts "Invalid guess"
+        end
+        code
+    end
+
+    def guess
+        guess = ""
+        4.times {guess += rand(1..6).to_s}
+        guess
+    end
+end
 Game.new.play
